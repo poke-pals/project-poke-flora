@@ -112,6 +112,18 @@ This checks that everything works, from editing to sharing.
 
 ---
 
+## One rule to know from day one
+
+**Never share the game file (`.gba`).**
+- Don't post `pokeemerald.gba` anywhere public (Discord servers, forums, file-sharing links), and don't send it to people outside the team.
+- A built `.gba` contains the original Pokémon Emerald, so sharing it is sharing Nintendo's game. Everyone on the team builds their own copy with Build & Play.
+- Show progress with **screenshots or videos** instead. Public releases will be **`.bps` patches** only, made by the maintainer.
+- Git already ignores `.gba` files, so GitHub Desktop never lists them. Don't rename or move one to get around that.
+
+More rules are in [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md#3-make-your-changes).
+
+---
+
 ## mGBA controls (default)
 
 | GBA button | Mac | Windows |

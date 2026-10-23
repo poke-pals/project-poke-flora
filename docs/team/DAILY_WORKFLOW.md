@@ -51,6 +51,12 @@ One branch per task. Small tasks are easier to review and merge.
 - If Porymap asks to **reload** because files changed, click **Yes**.
 - Adding art or music from somewhere? Note the creator and link in `CREDITS.md` **now**, not later.
 
+**Never share the game file (`.gba`).**
+- Don't post `pokeemerald.gba` anywhere public (Discord servers, forums, file-sharing links), and don't send it to people outside the team.
+- A built `.gba` contains the original Pokémon Emerald, so sharing it is sharing Nintendo's game. Everyone on the team builds their own copy with Build & Play.
+- Show progress with **screenshots or videos** instead. Public releases will be **`.bps` patches** only, made by the maintainer.
+- Git already ignores `.gba` files, so GitHub Desktop never lists them. Don't rename or move one to get around that.
+
 ---
 
 ## 4. Test it: Build & Play
@@ -92,7 +98,7 @@ You can commit several times on the same branch.
 
 **After you open it**
 - GitHub automatically builds the game. A ✅ means it built; a ❌ means something broke (message the maintainer).
-- The build's ROM can be downloaded from the **Checks** tab → the build run → **Artifacts**. Teammates can use this to try your change without building it themselves.
+- GitHub does **not** provide a download of the game; to try someone else's change, switch to their branch in GitHub Desktop and use Build & Play.
 - The maintainer reviews it and may leave comments. To make changes, just edit, commit, and push to the same branch again.
 
 ---
