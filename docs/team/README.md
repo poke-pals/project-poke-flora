@@ -10,4 +10,4 @@
 MAINTAINER_SETUP links to the matching friend step wherever the two depend on each other
 (for example, inviting a collaborator ↔ accepting the invite). When you change one side, check the other.
 
-**Repo:** <https://github.com/dabaquita/project-poke-flora> (fork of `rh-hideout/pokeemerald-expansion`, maintained by `dabaquita`).
+**Repo:** <https://github.com/poke-pals/project-poke-flora>, owned by the **`poke-pals`** GitHub organization (a fork of `rh-hideout/pokeemerald-expansion`). Maintainer: `dabaquita`.

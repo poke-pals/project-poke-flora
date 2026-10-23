@@ -16,6 +16,7 @@ Each section below notes the matching friend step so you can keep both docs in s
 | ⚠️ | **Public fork vs. private repo** | A fork of `rh-hideout/pokeemerald-expansion` is **always public**. If you want privacy, create a new private repo instead and add RHH as a remote. This checklist assumes a **fork**. | ✅ Public fork |
 | ⚠️ | **Base game** | Emerald (`make`). FireRed (`make firered`) is possible but not covered here. | ✅ Emerald |
 | ⚠️ | **Windows build approach** | WSL1 with the repo on the normal `C:` drive, so GitHub Desktop, Porymap and builds all use one folder. Confirm with your first Windows friend. | 🔲 |
+| ⚠️ | **GitHub organization** | The repo belongs to the **`poke-pals`** org (moved from `poke-pals/project-poke-flora` on 2026-10-23; old URLs redirect). Org plan: **Free**. | ✅ |
 | ⚠️ | **Main branch name** | The fork inherits `master` from RHH. Optionally rename it to `main` in GitHub settings. | 🔲 |
 
 ---
@@ -28,9 +29,15 @@ Each section below notes the matching friend step so you can keep both docs in s
 - [x] **Actions tab** → click **"I understand my workflows, go ahead and enable them."** (Actions start disabled on forks.)
   - ✅ Turned out not to be needed: Actions ran on the fork as soon as PR #1 was opened.
 - [x] **Settings → General → Features** → turn on **Issues** (for tracking tasks and map ownership).
-- [ ] **Settings → Collaborators** → invite each friend by GitHub username.
+- [x] **Transfer the repo to the `poke-pals` organization** (done 2026-10-23). PR #1 and all branches moved with it; it's still a fork of RHH.
+- [ ] **Invite friends as members of the `poke-pals` org** (not as collaborators on a personal repo):
+  <https://github.com/orgs/poke-pals/people> → **Invite member** → their GitHub username → role **Member**.
   - ↔ Friend step: [Onboarding §1 – Accept the GitHub invite](ONBOARDING.md#1-accept-the-github-invite)
-- [x] Fork URL: <https://github.com/dabaquita/project-poke-flora>
+- [ ] **Give members write access to the repo.** Org members only get the org's *base permission*, which defaults to **Read** (can't push branches). Either:
+  - Org **Settings → Member privileges → Base permissions → Write**, or
+  - create a team (for example `devs`) with **Write** on `project-poke-flora` and add friends to it (more precise; recommended if the org gets more repos).
+- **Free plan notes:** unlimited members and public repos; Actions minutes are unlimited for public repos; branch protection and `CODEOWNERS` work on public repos. Features like required reviewers on *private* repos would need a paid plan, which doesn't apply here because the fork must stay public.
+- [x] Fork URL: <https://github.com/poke-pals/project-poke-flora>
 
 ---
 
@@ -43,9 +50,10 @@ Your local clone is at `~/dev/pokeemerald-expansion`. *(Done 2026-10-23: `origin
   git remote rename origin rhh
   ```
   ```bash
-  git remote add origin https://github.com/dabaquita/project-poke-flora.git
+  git remote add origin git@github.com:poke-pals/project-poke-flora.git
   ```
-- [x] Confirm this Mac can push to GitHub (logged in as `dabaquita`, SSH).
+- [x] Confirm this Mac can push to GitHub (logged in as `dabaquita`, SSH; `dabaquita` has admin rights on the org repo).
+- [x] After the org transfer, `origin` and the `gh` default repo were updated to `poke-pals/project-poke-flora`.
 - [ ] Push the existing work branches (`setup/poryscript`, `docs/team-onboarding`) and open PRs **into your fork**.
   - When opening a PR, check the **base repository** is your fork, not `rh-hideout/...`.
 
@@ -58,7 +66,7 @@ Each item lands as a pull request in your fork for you to review.
 | # | Piece | What it does | Status |
 |---|---|---|---|
 | 4.1 | **Poryscript in the build** | `make` compiles `.pory` scripts. Sample in `data/maps/OldaleTown_House1/scripts.pory`. | ✅ branch `setup/poryscript` |
-| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR (**no ROM upload**: the fork is public), runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/dabaquita/project-poke-flora/pull/1) |
+| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR (**no ROM upload**: the fork is public), runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/poke-pals/project-poke-flora/pull/1) |
 | 4.3 | **Branch protection on `master`** | Changes only through PRs; the build must pass. (Settings → Branches.) | 🔲 |
 | 4.4 | **Mac setup script** – `setup/Setup for Mac.command` | One-shot install: tools, compiler, Porymap, mGBA, VS Code, Poryscript; test build at the end. | 🔲 |
 | 4.5 | **Build & Play (Mac)** – `Build & Play.command` | Double-click: `make`, then open the ROM in mGBA. Checks tools first. | 🔲 |
@@ -93,7 +101,7 @@ Run each friend through [ONBOARDING.md](ONBOARDING.md) **without helping unless 
 ## 6. Ongoing maintainer duties
 
 - **Review and merge PRs.** Make sure the build check is green before merging.
-- **Never publish a `.gba`**: not as a CI artifact, release asset, or Discord/forum upload. The fork is public; CI must not upload ROMs. If one ever gets uploaded, delete the artifact and the run (`gh api -X DELETE repos/dabaquita/project-poke-flora/actions/artifacts/<id>`, `gh run delete <run-id>`).
+- **Never publish a `.gba`**: not as a CI artifact, release asset, or Discord/forum upload. The fork is public; CI must not upload ROMs. If one ever gets uploaded, delete the artifact and the run (`gh api -X DELETE repos/poke-pals/project-poke-flora/actions/artifacts/<id>`, `gh run delete <run-id>`).
 - **Keep ownership current:** who is editing which maps/flags (GitHub Issues or `WHO_OWNS_WHAT.md`).
 - **Keep `CREDITS.md` current** whenever assets or feature branches are added.
 - **Upstream (RHH) updates**, between content milestones:
