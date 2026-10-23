@@ -1,7 +1,8 @@
 name: CI
 
 # Emerald-only build and test pipeline for project-poke-flora.
-# - build: runs on every push and PR, uploads a playable pokeemerald.gba
+# - build: runs on every push and PR. The ROM is NOT uploaded: this repo is public,
+#   and a built .gba contains the original game. Build locally to play.
 # - test:  runs `make check` (battle engine tests) on PRs and on master
 # - ci-passed: single gate job for branch protection
 
@@ -71,19 +72,6 @@ jobs:
       - name: Build ROM
         run: make -j$(nproc) -O all 2>&1 | tee build.log
 
-      - name: Name the artifact
-        id: name
-        run: |
-          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          echo "artifact=pokeemerald-${branch//\//-}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
-
-      - name: Upload ROM
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.name.outputs.artifact }}
-          path: pokeemerald.gba
-          retention-days: 30
-
       - name: Memory report
         run: |
           {
@@ -91,7 +79,6 @@ jobs:
             echo '```'
             grep -E "Memory region|EWRAM:|IWRAM:|ROM:" build.log || echo "(memory report not found)"
             echo '```'
-            echo "Download the ROM from the **Artifacts** section of this run: \`${{ steps.name.outputs.artifact }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
   test:
