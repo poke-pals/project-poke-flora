@@ -91,7 +91,7 @@ You can commit several times on the same branch.
 
 1. Click **Publish branch** (first time) or **Push origin** (after that).
 2. Click **Create Pull Request**. A browser page opens.
-3. ⚠️ Check **base repository** = **`dabaquita/project-poke-flora`** and **base** = **`master`**.
+3. ⚠️ Check **base repository** = **`poke-pals/project-poke-flora`** and **base** = **`master`**.
    If it says `rh-hideout/pokeemerald-expansion`, change it. That's the original project, not ours.
 4. Describe what you changed and how to see it in game (which map, what to talk to).
 5. Click **Create pull request**.

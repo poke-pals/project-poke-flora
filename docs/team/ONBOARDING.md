@@ -28,7 +28,8 @@ You only do this once per computer. After today, use [DAILY_WORKFLOW.md](DAILY_W
 ## 1. Accept the GitHub invite
 
 1. Tell the maintainer your GitHub username.
-2. Check your email for **"You've been invited to collaborate on …"** and click **Accept invitation**.
+2. Check your email for an invitation to join the **`poke-pals`** organization on GitHub and click **Join poke-pals**.
+   (Or go to <https://github.com/orgs/poke-pals/invitation> while signed in.)
 
 ---
 
@@ -43,7 +44,7 @@ You only do this once per computer. After today, use [DAILY_WORKFLOW.md](DAILY_W
 ## 3. Download (clone) the project
 
 1. In GitHub Desktop: **File → Clone repository…**
-2. Pick the hack's repository from the list (`dabaquita/project-poke-flora`).
+2. Pick the hack's repository from the list (`poke-pals/project-poke-flora`).
 3. Leave the **Local path** as the default. Click **Clone**. (It's a large download; give it a few minutes.)
 4. ⚠️ **Important:** GitHub Desktop asks **"How are you planning to use this fork?"**
    Choose **"For my own purposes."**
@@ -107,7 +108,7 @@ This checks that everything works, from editing to sharing.
 5. **Commit** – Back in GitHub Desktop, you'll see `scripts.pory` in the changed files list. Type a summary like `Test dialogue change` and click **Commit to yourname-first-change**.
 6. **Push** – Click **Publish branch**.
 7. **Pull request** – Click **Create Pull Request**. A browser page opens.
-   ⚠️ Check that **base repository** shows **`dabaquita/project-poke-flora`**, **not** `rh-hideout/pokeemerald-expansion`. Then click **Create pull request**.
+   ⚠️ Check that **base repository** shows **`poke-pals/project-poke-flora`**, **not** `rh-hideout/pokeemerald-expansion`. Then click **Create pull request**.
 8. Tell the maintainer. Once they merge it, you're officially set up! 🎉
 
 ---
