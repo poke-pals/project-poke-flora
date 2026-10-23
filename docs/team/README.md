@@ -1,0 +1,13 @@
+# Team Docs
+
+| Doc | For | Use it when |
+|---|---|---|
+| [ONBOARDING.md](ONBOARDING.md) | Everyone | Setting up a new computer (once) |
+| [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md) | Everyone | Every time you work on the hack |
+| [MAINTAINER_SETUP.md](MAINTAINER_SETUP.md) | Maintainer | Setting up the fork and tooling, onboarding friends, ongoing duties |
+
+**Keeping them in sync:** friend-facing steps live in ONBOARDING and DAILY_WORKFLOW.
+MAINTAINER_SETUP links to the matching friend step wherever the two depend on each other
+(for example, inviting a collaborator ↔ accepting the invite). When you change one side, check the other.
+
+**Repo:** <https://github.com/dabaquita/project-poke-flora> (fork of `rh-hideout/pokeemerald-expansion`, maintained by `dabaquita`).
