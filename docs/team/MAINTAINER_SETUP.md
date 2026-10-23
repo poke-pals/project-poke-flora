@@ -25,8 +25,8 @@ Each section below notes the matching friend step so you can keep both docs in s
 - [x] Go to <https://github.com/rh-hideout/pokeemerald-expansion> → **Fork**. *(Done 2026-10-23 with `gh repo fork`.)*
   - Name it after your hack.
   - Leaving **"Copy the master branch only"** checked is fine.
-- [ ] **Actions tab** → click **"I understand my workflows, go ahead and enable them."** (Actions start disabled on forks.)
-  - ⏸ **Leave this off until our own build workflow (4.2) is merged.** RHH's inherited CI would otherwise run and fail on our Poryscript changes.
+- [x] **Actions tab** → click **"I understand my workflows, go ahead and enable them."** (Actions start disabled on forks.)
+  - ✅ Turned out not to be needed: Actions ran on the fork as soon as PR #1 was opened.
 - [x] **Settings → General → Features** → turn on **Issues** (for tracking tasks and map ownership).
 - [ ] **Settings → Collaborators** → invite each friend by GitHub username.
   - ↔ Friend step: [Onboarding §1 – Accept the GitHub invite](ONBOARDING.md#1-accept-the-github-invite)
@@ -58,7 +58,7 @@ Each item lands as a pull request in your fork for you to review.
 | # | Piece | What it does | Status |
 |---|---|---|---|
 | 4.1 | **Poryscript in the build** | `make` compiles `.pory` scripts. Sample in `data/maps/OldaleTown_House1/scripts.pory`. | ✅ branch `setup/poryscript` |
-| 4.2 | **GitHub Actions build** | Replaces RHH's CI. Emerald only, downloads Poryscript, uploads `pokeemerald.gba` on every push/PR. Removes RHH's `docs.yml` and `labels.yml`. | 🔲 |
+| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR, runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/dabaquita/project-poke-flora/pull/1) |
 | 4.3 | **Branch protection on `master`** | Changes only through PRs; the build must pass. (Settings → Branches.) | 🔲 |
 | 4.4 | **Mac setup script** – `setup/Setup for Mac.command` | One-shot install: tools, compiler, Porymap, mGBA, VS Code, Poryscript; test build at the end. | 🔲 |
 | 4.5 | **Build & Play (Mac)** – `Build & Play.command` | Double-click: `make`, then open the ROM in mGBA. Checks tools first. | 🔲 |
@@ -103,6 +103,34 @@ Run each friend through [ONBOARDING.md](ONBOARDING.md) **without helping unless 
     ```
     Then merge a release tag (for example `expansion/1.17.1`) on a branch, fix conflicts, build, play-test, and open a PR.
 - **Watch the memory report** at the end of each build (EWRAM/IWRAM usage) when adding C features.
+
+---
+
+## 7. Release builds (later: when there's a playable demo)
+
+Not needed during early alpha. Set this up when you have something worth sharing outside the team,
+for example the first town through the first gym.
+
+**What a release build is:** `make release` builds `pokeemerald-release.gba` with `RELEASE=1`,
+which turns off debug-only features (the overworld debug menu, battle debug menu, sprite visualizer).
+
+**How hacks are distributed:** as a **`.bps` patch**, never as a `.gba`. Players apply the patch to
+their own Emerald ROM. A `.gba` contains the original game's code and assets, so it must not be
+posted publicly (GitHub Releases, Discord, forums).
+
+**Planned process**
+1. Freeze content on `master`, play-test, and bump the version in `CHANGELOG.md`.
+2. Tag the commit: `git tag v0.1.0 && git push origin v0.1.0`.
+3. A release workflow (to be added) builds `make release` on the tag, runs tests, and creates a **draft**
+   GitHub Release with notes. It does **not** attach the ROM.
+4. Locally: build the same tag with `make release`, then create the patch with
+   [Floating IPS](https://github.com/Alcaro/Flips) against your **own dumped, clean Emerald ROM**
+   (keep it outside the repo, never commit it):
+   `flips --create --bps clean-emerald.gba pokeemerald-release.gba project-poke-flora-v0.1.0.bps`
+5. Upload the `.bps` to the draft release, check it applies with
+   [Rom Patcher JS](https://www.marcrobledo.com/RomPatcher.js/), and publish.
+
+**Versioning:** `v0.x.y` while in development (`x` = milestone such as a new gym, `y` = fixes); `v1.0.0` for the first complete game.
 
 ---
 
