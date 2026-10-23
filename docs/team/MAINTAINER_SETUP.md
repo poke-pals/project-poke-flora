@@ -58,7 +58,7 @@ Each item lands as a pull request in your fork for you to review.
 | # | Piece | What it does | Status |
 |---|---|---|---|
 | 4.1 | **Poryscript in the build** | `make` compiles `.pory` scripts. Sample in `data/maps/OldaleTown_House1/scripts.pory`. | ✅ branch `setup/poryscript` |
-| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR, runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/dabaquita/project-poke-flora/pull/1) |
+| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR (**no ROM upload**: the fork is public), runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/dabaquita/project-poke-flora/pull/1) |
 | 4.3 | **Branch protection on `master`** | Changes only through PRs; the build must pass. (Settings → Branches.) | 🔲 |
 | 4.4 | **Mac setup script** – `setup/Setup for Mac.command` | One-shot install: tools, compiler, Porymap, mGBA, VS Code, Poryscript; test build at the end. | 🔲 |
 | 4.5 | **Build & Play (Mac)** – `Build & Play.command` | Double-click: `make`, then open the ROM in mGBA. Checks tools first. | 🔲 |
@@ -93,6 +93,7 @@ Run each friend through [ONBOARDING.md](ONBOARDING.md) **without helping unless 
 ## 6. Ongoing maintainer duties
 
 - **Review and merge PRs.** Make sure the build check is green before merging.
+- **Never publish a `.gba`**: not as a CI artifact, release asset, or Discord/forum upload. The fork is public; CI must not upload ROMs. If one ever gets uploaded, delete the artifact and the run (`gh api -X DELETE repos/dabaquita/project-poke-flora/actions/artifacts/<id>`, `gh run delete <run-id>`).
 - **Keep ownership current:** who is editing which maps/flags (GitHub Issues or `WHO_OWNS_WHAT.md`).
 - **Keep `CREDITS.md` current** whenever assets or feature branches are added.
 - **Upstream (RHH) updates**, between content milestones:
