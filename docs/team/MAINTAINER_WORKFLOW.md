@@ -12,7 +12,8 @@ Friends' side: [ONBOARDING.md](ONBOARDING.md) and [DAILY_WORKFLOW.md](DAILY_WORK
 
 - [x] **Give members write access:** org **Settings → Member privileges → Base permissions → Write**.
 - [x] **Protect `master`:** rule on `master` requires a pull request, **CI passed**, and Code Owner review.
-  - Admins (you) can bypass it, so your own code PRs aren't stuck waiting for a second reviewer.
+  - Admins (you) can bypass it: on your own PRs, tick **bypass rules** next to the merge button.
+    GitHub doesn't let you approve your own PR, so this is how your code PRs merge.
   - Change it: repo **Settings → Branches → `master` → Edit**.
 - [ ] **Test Windows setup** with your first Windows friend (the scripts haven't run on real Windows yet).
 - [ ] **PR template:** replace RHH's `.github/pull_request_template.md` with a short team one.
@@ -37,7 +38,7 @@ Friends' side: [ONBOARDING.md](ONBOARDING.md) and [DAILY_WORKFLOW.md](DAILY_WORK
 
 1. Open the PR: <https://github.com/poke-pals/project-poke-flora/pulls>.
 2. Check **CI passed** is ✅.
-   - The build runs on every PR (~5 min). Battle tests (~25 min) run only when the PR changes code (`src/`, `include/`, `test/`, …); map/text/graphics PRs skip them.
+   - The build runs on every PR except docs-only ones (~5 min). Battle tests (~25 min) run only when the PR changes code (`src/`, `include/`, `test/`, …); map/text/graphics PRs skip them.
    - ❌? Open the failed job, find the error, and comment on the PR or help the friend fix it.
 3. Read the **Files changed** tab.
    - Maps and text: skim them.

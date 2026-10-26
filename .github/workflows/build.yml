@@ -1,7 +1,8 @@
 name: CI
 
 # Emerald-only build and test pipeline for project-poke-flora.
-# - build: runs on every PR and every push to master. The ROM is NOT uploaded: this repo is public,
+# - build: runs on master, on manual runs, and on PRs that change anything besides docs.
+#   Docs/CODEOWNERS-only PRs skip it. The ROM is NOT uploaded: this repo is public,
 #   and a built .gba contains the original game. Build locally to play.
 # - test:  runs `make check` (~5,900 battle engine tests, ~25 min) on master, on manual
 #   runs, and on PRs that change code. Map/text/graphics/docs-only PRs skip it.
@@ -34,6 +35,14 @@ env:
 jobs:
   build:
     name: Build (Emerald)
+    # Always on master and manual runs; on PRs unless only docs changed.
+    needs: changes
+    if: >-
+      !cancelled() && (
+        (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
+        github.event_name == 'workflow_dispatch' ||
+        needs.changes.outputs.game == 'true'
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -105,7 +114,7 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-  # Decides whether a PR touches code the battle tests cover.
+  # Decides whether a PR touches the game at all (build) and code the battle tests cover (test).
   changes:
     name: Detect code changes
     if: github.event_name == 'pull_request'
@@ -114,8 +123,20 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
+      game: ${{ steps.game.outputs.game }}
       code: ${{ steps.filter.outputs.code }}
     steps:
+      - uses: dorny/paths-filter@v3.0.2
+        id: game
+        with:
+          # A file counts only if it matches every pattern, so `!` excludes docs.
+          predicate-quantifier: 'every'
+          filters: |
+            game:
+              - '**'
+              - '!docs/**'
+              - '!**/*.md'
+              - '!.github/CODEOWNERS'
       - uses: dorny/paths-filter@v3.0.2
         id: filter
         with:
@@ -214,7 +235,7 @@ jobs:
         run: make -j$(nproc) check
 
   # Gate job for branch protection: require "CI passed" on master.
-  # Passes when the build succeeded and tests succeeded or were skipped on purpose.
+  # Passes when the build and tests succeeded or were skipped on purpose.
   ci-passed:
     name: CI passed
     if: ${{ !cancelled() }}
@@ -225,6 +246,6 @@ jobs:
       - name: Check results
         run: |
           echo "build: ${{ needs.build.result }}, changes: ${{ needs.changes.result }}, test: ${{ needs.test.result }}"
-          [ "${{ needs.build.result }}" = "success" ] || exit 1
           case "${{ needs.changes.result }}" in success|skipped) ;; *) exit 1 ;; esac
+          case "${{ needs.build.result }}" in success|skipped) ;; *) exit 1 ;; esac
           case "${{ needs.test.result }}" in success|skipped) ;; *) exit 1 ;; esac
