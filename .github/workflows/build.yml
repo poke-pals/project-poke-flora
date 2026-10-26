@@ -1,16 +1,18 @@
 name: CI
 
 # Emerald-only build and test pipeline for project-poke-flora.
-# - build: runs on every push and PR. The ROM is NOT uploaded: this repo is public,
+# - build: runs on every PR and every push to master. The ROM is NOT uploaded: this repo is public,
 #   and a built .gba contains the original game. Build locally to play.
 # - test:  runs `make check` (~5,900 battle engine tests, ~25 min) on master, on manual
 #   runs, and on PRs that change code. Map/text/graphics/docs-only PRs skip it.
 # - ci-passed: single gate job for branch protection
 
 on:
+  # Branches are checked through their PR. Building every branch push too would add a
+  # second "CI passed" check (without tests) to each PR commit.
   push:
     branches:
-      - '**'
+      - master
   pull_request:
     branches:
       - master
@@ -55,10 +57,11 @@ jobs:
       - name: Install build packages
         run: |
           mkdir -p ~/apt-archives/partial
-          sudo apt-get update
+          sudo apt-get update -o Acquire::Retries=3
           sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 \
             -o Dir::Cache::Archives="$HOME/apt-archives" \
             binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+          sudo apt-get autoclean -o Dir::Cache::Archives="$HOME/apt-archives"
           sudo chown -R "$USER" ~/apt-archives
 
       - name: Install Poryscript
@@ -128,6 +131,11 @@ jobs:
               - 'Makefile'
               - '*.mk'
               - 'ld_script*'
+              - 'libagbsyscall/**'
+              - 'charmap.txt'
+              # Sprites used by test/compression/smol.c
+              - 'graphics/pokemon/bulbasaur/**'
+              - 'graphics/pokemon/ivysaur/**'
               - '.github/workflows/**'
 
   test:
@@ -163,10 +171,11 @@ jobs:
       - name: Install build packages
         run: |
           mkdir -p ~/apt-archives/partial
-          sudo apt-get update
+          sudo apt-get update -o Acquire::Retries=3
           sudo apt-get install -y --no-install-recommends -o Acquire::Retries=3 \
             -o Dir::Cache::Archives="$HOME/apt-archives" \
             binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+          sudo apt-get autoclean -o Dir::Cache::Archives="$HOME/apt-archives"
           sudo chown -R "$USER" ~/apt-archives
 
       - name: Install Poryscript
@@ -208,7 +217,7 @@ jobs:
   # Passes when the build succeeded and tests succeeded or were skipped on purpose.
   ci-passed:
     name: CI passed
-    if: always()
+    if: ${{ !cancelled() }}
     needs: [build, changes, test]
     runs-on: ubuntu-latest
     timeout-minutes: 5
