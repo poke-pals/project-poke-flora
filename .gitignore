@@ -70,3 +70,6 @@ __pycache__
 # Poryscript binary (download per-OS from github.com/huderlem/poryscript/releases)
 tools/poryscript/poryscript
 tools/poryscript/poryscript.exe
+
+# Team shortcut (Windows)
+!Build & Play.bat
