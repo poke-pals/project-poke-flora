@@ -138,7 +138,9 @@ if (Test-DistroInstalled) {
     Write-Host "    Windows will ask for administrator permission to install WSL. Click Yes." -ForegroundColor Yellow
     Write-Host "    If an Ubuntu window opens and asks for a username and password, create them" -ForegroundColor Yellow
     Write-Host "    (remember the password), then type 'exit' in that window." -ForegroundColor Yellow
-    $wslCmd = "wsl --set-default-version 1; wsl --install -d $Distro --enable-wsl1; exit `$LASTEXITCODE"
+    # --set-default-version only works once WSL exists, so it runs after --install
+    # (on a fresh PC it can still fail until the restart; the WSL1 check below covers that).
+    $wslCmd = "wsl --install -d $Distro --enable-wsl1; `$code = `$LASTEXITCODE; wsl --set-default-version 1; exit `$code"
     try {
         $p = Start-Process powershell.exe -Verb RunAs -Wait -PassThru -ArgumentList '-NoProfile', '-Command', $wslCmd
         Info "WSL installer finished (code $($p.ExitCode))."
@@ -154,20 +156,27 @@ if (Test-DistroInstalled) {
 }
 
 if (Test-DistroInstalled) {
-    $verbose = Get-WslText @('-l', '-v')
-    if ($verbose -match "$Distro\s+\S+\s+2") {
-        Info "Switching Ubuntu to WSL1 (faster builds on the C: drive)..."
-        wsl.exe --set-version $Distro 1 | Out-Null
+    Say "WSL version"
+    wsl.exe --set-default-version 1 | Out-Null
+    if ((Get-WslText @('-l', '-v')) -match "$Distro\s+\S+\s+2") {
+        Info "Switching Ubuntu to WSL1 (faster builds on the C: drive; a few minutes)..."
+        wsl.exe --terminate $Distro | Out-Null
+        wsl.exe --set-version $Distro 1 | Out-Host
+    }
+    if ((Get-WslText @('-l', '-v')) -match "$Distro\s+\S+\s+1") {
+        Ok "Ubuntu uses WSL1"
+    } else {
+        Bad "Ubuntu is still on WSL2 (builds would be very slow): screenshot this and send it to the maintainer"
     }
 
     Say "Build packages inside Ubuntu"
     $check = 'command -v arm-none-eabi-gcc >/dev/null && dpkg -s libpng-dev >/dev/null 2>&1 && command -v make >/dev/null'
-    wsl.exe -d $Distro -u root -- bash -c $check
+    wsl.exe -d $Distro -u root -e bash -c $check
     if ($LASTEXITCODE -eq 0) { Ok "Build packages (Ubuntu)" } else {
         Info "Installing compiler and libraries (5-10 minutes)..."
         $apt = 'export DEBIAN_FRONTEND=noninteractive; apt-get update -q && apt-get install -y -q build-essential binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi git libpng-dev python3'
-        wsl.exe -d $Distro -u root -- bash -c $apt | Out-Host
-        wsl.exe -d $Distro -u root -- bash -c $check
+        wsl.exe -d $Distro -u root -e bash -c $apt | Out-Host
+        wsl.exe -d $Distro -u root -e bash -c $check
         if ($LASTEXITCODE -eq 0) { Ok "Build packages (Ubuntu)" } else { Bad "Build packages (Ubuntu)" }
     }
 }
@@ -209,7 +218,7 @@ if ($script:Failed) {
     Skip "Test build (skipped: fix the [FAIL] items first)"
 } else {
     Info "Building the game for the first time (5-15 minutes on the first run)..."
-    wsl.exe -d $Distro --cd "$ProjectDir" -- bash -lc 'make -j$(nproc)' | Out-Host
+    wsl.exe -d $Distro --cd "$ProjectDir" -e bash -lc 'make -j$(nproc)' | Out-Host
     if ($LASTEXITCODE -eq 0 -and (Test-Path (Join-Path $ProjectDir 'pokeemerald.gba'))) {
         Ok "Test build (pokeemerald.gba)"
     } else {

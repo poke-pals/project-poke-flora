@@ -5,8 +5,9 @@
 #   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/poke-pals/project-poke-flora/master/setup/setup-mac.sh)"
 #
 # Safe to run again: anything already installed is skipped.
-# Options:
-#   --check   only report what is installed; change nothing
+# To only report what is installed (change nothing), put PFLORA_CHECK=1 in front:
+#   PFLORA_CHECK=1 /bin/bash -c "$(curl -fsSL ...)"
+# (or pass --check when running a local copy: bash setup/setup-mac.sh --check)
 #
 # Overrides (for testing): PFLORA_DIR, PFLORA_REPO_URL, PFLORA_BRANCH
 
@@ -21,7 +22,7 @@ PORYSCRIPT_VERSION="3.6.1"
 DKP_PACMAN_VERSION="v6.0.2"
 
 CHECK_ONLY=0
-[ "${1:-}" = "--check" ] && CHECK_ONLY=1
+if [ "${1:-}" = "--check" ] || [ "${PFLORA_CHECK:-0}" = "1" ]; then CHECK_ONLY=1; fi
 
 BOLD=$'\033[1m'; GREEN=$'\033[32m'; RED=$'\033[31m'; YELLOW=$'\033[33m'; RESET=$'\033[0m'
 RESULTS=()
@@ -52,7 +53,16 @@ EOF
 # ---------------------------------------------------------------- Xcode CLT
 step_xcode_clt() {
     say "Apple Command Line Tools"
-    if xcode-select -p >/dev/null 2>&1; then ok "Apple Command Line Tools"; return; fi
+    if xcode-select -p >/dev/null 2>&1; then
+        # With full Xcode installed, Homebrew refuses to run until its license is accepted.
+        if [[ "$(xcode-select -p)" == *Xcode*.app* ]] && ! xcodebuild -license check >/dev/null 2>&1; then
+            if [ $CHECK_ONLY -eq 1 ]; then bad "Xcode license not accepted"; return; fi
+            info "Xcode is installed but its license hasn't been accepted (Homebrew needs this)."
+            info "Accepting it now. Enter your Mac password if asked."
+            sudo xcodebuild -license accept || { bad "Xcode license (run: sudo xcodebuild -license accept)"; return; }
+        fi
+        ok "Apple Command Line Tools"; return
+    fi
     if [ $CHECK_ONLY -eq 1 ]; then bad "Apple Command Line Tools (missing)"; return; fi
     info "A window will pop up. Click 'Install' and wait for it to finish."
     xcode-select --install >/dev/null 2>&1
@@ -86,7 +96,12 @@ install_cask() {  # $1 = cask, $2 = app name in /Applications, $3 = label
     if [ $CHECK_ONLY -eq 1 ]; then bad "$3 (missing)"; return; fi
     if ! command -v brew >/dev/null; then bad "$3 (needs Homebrew)"; return; fi
     info "Installing $3..."
-    if brew install --cask "$1" >/dev/null 2>&1 && [ -d "/Applications/$2.app" ]; then ok "$3"; else bad "$3"; fi
+    if brew install --cask "$1" >"$TMP_DIR/brew.log" 2>&1 && [ -d "/Applications/$2.app" ]; then
+        ok "$3"
+    else
+        tail -5 "$TMP_DIR/brew.log"
+        bad "$3"
+    fi
 }
 
 step_apps() {
@@ -109,7 +124,7 @@ step_porymap() {
     unzip -q -o "$TMP_DIR/porymap.zip" -d "$TMP_DIR/porymap"
     local dmg mount
     dmg="$(find "$TMP_DIR/porymap" -name '*.dmg' | head -1)"
-    mount="$(hdiutil attach -nobrowse -readonly "$dmg" | tail -1 | awk -F'\t' '{print $NF}')"
+    mount="$(hdiutil attach -nobrowse -readonly "$dmg" 2>/dev/null | tail -1 | awk -F'\t' '{print $NF}')"
     cp -R "$mount/porymap.app" /Applications/ 2>/dev/null
     hdiutil detach "$mount" -quiet
     if [ -d "/Applications/porymap.app" ]; then ok "Porymap"; else bad "Porymap"; fi
@@ -123,7 +138,12 @@ step_build_libs() {
     fi
     if [ $CHECK_ONLY -eq 1 ]; then bad "libpng / pkg-config (missing)"; return; fi
     if ! command -v brew >/dev/null; then bad "libpng / pkg-config (needs Homebrew)"; return; fi
-    if brew install libpng pkgconf >/dev/null 2>&1; then ok "libpng and pkg-config"; else bad "libpng / pkg-config"; fi
+    if brew install libpng pkgconf >"$TMP_DIR/brew.log" 2>&1; then
+        ok "libpng and pkg-config"
+    else
+        tail -5 "$TMP_DIR/brew.log"
+        bad "libpng / pkg-config"
+    fi
 }
 
 step_devkitarm() {
@@ -145,7 +165,24 @@ step_devkitarm() {
 }
 
 step_shell_env() {
-    say "Shell settings (DEVKITPRO / DEVKITARM)"
+    say "Shell settings (Homebrew, DEVKITPRO / DEVKITARM)"
+    # Apple Silicon Homebrew isn't on PATH in new Terminal windows unless ~/.zprofile loads it;
+    # without it, rebuilding the build tools can't find pkg-config/libpng.
+    local profile="$HOME/.zprofile"
+    if [ -x /opt/homebrew/bin/brew ]; then
+        if grep -qs "brew shellenv" "$profile" "$HOME/.zshrc"; then
+            ok "Homebrew in ~/.zprofile"
+        elif [ $CHECK_ONLY -eq 1 ]; then
+            bad "Homebrew not loaded in ~/.zprofile"
+        else
+            {
+                echo ''
+                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+            } >> "$profile"
+            ok "Homebrew in ~/.zprofile"
+        fi
+    fi
+
     local rc="$HOME/.zshrc"
     if grep -q "DEVKITPRO=" "$rc" 2>/dev/null; then ok "DEVKITPRO in ~/.zshrc"; return; fi
     if [ $CHECK_ONLY -eq 1 ]; then bad "DEVKITPRO not set in ~/.zshrc"; return; fi
@@ -176,15 +213,29 @@ step_clone() {
 step_poryscript() {
     say "Poryscript (script compiler)"
     local bin="$PROJECT_DIR/tools/poryscript/poryscript"
-    if [ -x "$bin" ]; then ok "Poryscript"; return; fi
+    # Run it, not just check it exists: an Apple Silicon binary can't run on an Intel Mac.
+    if "$bin" -v >/dev/null 2>&1; then ok "Poryscript"; return; fi
     if [ $CHECK_ONLY -eq 1 ]; then bad "Poryscript (missing)"; return; fi
     if [ ! -d "$PROJECT_DIR" ]; then bad "Poryscript (no project folder)"; return; fi
-    local url="https://github.com/huderlem/poryscript/releases/download/${PORYSCRIPT_VERSION}/poryscript-mac.zip"
-    if ! curl -fsSL -o "$TMP_DIR/poryscript.zip" "$url"; then bad "Poryscript (download failed)"; return; fi
-    unzip -q -o "$TMP_DIR/poryscript.zip" -d "$TMP_DIR/poryscript"
     mkdir -p "$(dirname "$bin")"
-    cp "$TMP_DIR/poryscript/poryscript-mac/poryscript" "$bin" && chmod +x "$bin"
-    if [ -x "$bin" ]; then ok "Poryscript"; else bad "Poryscript"; fi
+    rm -f "$bin"
+    if [ "$(uname -m)" = "x86_64" ]; then
+        # Poryscript only publishes an Apple Silicon Mac build, so compile it here.
+        info "Building Poryscript ${PORYSCRIPT_VERSION} for this Intel Mac (needs Go)..."
+        if ! command -v go >/dev/null; then
+            command -v brew >/dev/null && brew install go >"$TMP_DIR/brew.log" 2>&1
+        fi
+        if ! command -v go >/dev/null; then tail -5 "$TMP_DIR/brew.log" 2>/dev/null; bad "Poryscript (couldn't install Go)"; return; fi
+        local src="https://github.com/huderlem/poryscript/archive/refs/tags/${PORYSCRIPT_VERSION}.tar.gz"
+        if ! curl -fsSL "$src" | tar -xz -C "$TMP_DIR"; then bad "Poryscript (download failed)"; return; fi
+        (cd "$TMP_DIR/poryscript-${PORYSCRIPT_VERSION}" && go build -o "$bin" .) || { bad "Poryscript (build failed)"; return; }
+    else
+        local url="https://github.com/huderlem/poryscript/releases/download/${PORYSCRIPT_VERSION}/poryscript-mac.zip"
+        if ! curl -fsSL -o "$TMP_DIR/poryscript.zip" "$url"; then bad "Poryscript (download failed)"; return; fi
+        unzip -q -o "$TMP_DIR/poryscript.zip" -d "$TMP_DIR/poryscript"
+        cp "$TMP_DIR/poryscript/poryscript-mac/poryscript" "$bin" && chmod +x "$bin"
+    fi
+    if "$bin" -v >/dev/null 2>&1; then ok "Poryscript"; else bad "Poryscript"; fi
 }
 
 step_test_build() {

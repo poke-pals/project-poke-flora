@@ -4,9 +4,11 @@ setlocal
 cd /d "%~dp0"
 
 where wsl.exe >nul 2>&1
-if errorlevel 1 goto :missing
-wsl.exe -d Ubuntu -- bash -c "command -v arm-none-eabi-gcc >/dev/null"
-if errorlevel 1 goto :missing
+if not "%errorlevel%"=="0" goto :missing
+rem -e runs bash directly; without it WSL's login shell would expand $... before bash sees it.
+rem errorlevel checks use "not 0" because wsl.exe reports its own failures as -1.
+wsl.exe -d Ubuntu -e bash -c "command -v arm-none-eabi-gcc >/dev/null"
+if not "%errorlevel%"=="0" goto :missing
 if not exist "tools\poryscript\poryscript" goto :missing
 
 set "MGBA=%LOCALAPPDATA%\Programs\mGBA\mGBA.exe"
@@ -15,8 +17,8 @@ if not exist "%MGBA%" set "MGBA=%ProgramFiles%\mGBA\mGBA.exe"
 if not exist "%MGBA%" goto :missing
 
 echo Building... (a few seconds, or a few minutes after big changes)
-wsl.exe -d Ubuntu --cd "%CD%" -- bash -lc "make -j$(nproc) 2>&1 | tail -40; exit ${PIPESTATUS[0]}"
-if errorlevel 1 goto :buildfail
+wsl.exe -d Ubuntu --cd "%CD%" -e bash -lc "set -o pipefail; make -j$(nproc) 2>&1 | tail -40"
+if not "%errorlevel%"=="0" goto :buildfail
 if not exist "pokeemerald.gba" goto :buildfail
 
 echo.

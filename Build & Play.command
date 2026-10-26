@@ -3,6 +3,10 @@
 
 cd "$(dirname "$0")" || exit 1
 
+# Homebrew provides pkg-config/libpng for rebuilding the build tools.
+for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    [ -x "$b" ] && { eval "$("$b" shellenv)"; break; }
+done
 export DEVKITPRO=/opt/devkitpro
 export DEVKITARM=$DEVKITPRO/devkitARM
 SETUP_CMD='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/poke-pals/project-poke-flora/master/setup/setup-mac.sh)"'
@@ -17,7 +21,7 @@ fail() {
 
 missing=()
 [ -x "$DEVKITARM/bin/arm-none-eabi-gcc" ] || missing+=("GBA compiler (devkitARM)")
-[ -x tools/poryscript/poryscript ]        || missing+=("Poryscript")
+tools/poryscript/poryscript -v >/dev/null 2>&1 || missing+=("Poryscript")
 [ -d /Applications/mGBA.app ]             || missing+=("mGBA")
 if [ ${#missing[@]} -gt 0 ]; then
     printf 'Missing: %s\n' "${missing[@]}"
