@@ -65,18 +65,18 @@ Each item lands as a pull request in your fork for you to review.
 
 | # | Piece | What it does | Status |
 |---|---|---|---|
-| 4.1 | **Poryscript in the build** | `make` compiles `.pory` scripts. Sample in `data/maps/OldaleTown_House1/scripts.pory`. | ✅ branch `setup/poryscript` |
-| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR (**no ROM upload**: the fork is public), runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | 🛠 [PR #1](https://github.com/poke-pals/project-poke-flora/pull/1) |
+| 4.1 | **Poryscript in the build** | `make` compiles `.pory` scripts. Sample in `data/maps/OldaleTown_House1/scripts.pory`. Also adds CI job timeouts. | 🛠 [PR #3](https://github.com/poke-pals/project-poke-flora/pull/3) |
+| 4.2 | **GitHub Actions build + tests** | Replaces RHH's CI. Emerald only, downloads Poryscript, builds on every push/PR (**no ROM upload**: the fork is public), runs `make check` on PRs and `master`, gate job `CI passed`. Removes RHH's `docs.yml` and `labels.yml`. | ✅ [PR #1](https://github.com/poke-pals/project-poke-flora/pull/1) |
 | 4.3 | **Branch protection on `master`** | Changes only through PRs; the build must pass. (Settings → Branches.) | 🔲 |
-| 4.4 | **Mac setup script** – `setup/Setup for Mac.command` | One-shot install: tools, compiler, Porymap, mGBA, VS Code, Poryscript; test build at the end. | 🔲 |
-| 4.5 | **Build & Play (Mac)** – `Build & Play.command` | Double-click: `make`, then open the ROM in mGBA. Checks tools first. | 🔲 |
-| 4.6 | **Windows setup** – `setup\Setup for Windows.ps1` + `setup/setup-wsl.sh` | Installs tools via winget, WSL1 Ubuntu (reboot), build packages, Poryscript. **Can't be tested on the Mac.** | 🔲 |
-| 4.7 | **Build & Play (Windows)** – `Build & Play.bat` | Runs `make` inside WSL, opens the ROM in Windows mGBA. | 🔲 |
+| 4.4 | **Mac setup** – `setup/setup-mac.sh` (one-liner) | One-shot install: tools, compiler, Porymap, mGBA, VS Code, GitHub Desktop, Poryscript; test build at the end. Tested on a clean reinstall. | ✅ [PR #2](https://github.com/poke-pals/project-poke-flora/pull/2) |
+| 4.5 | **Build & Play (Mac)** – `Build & Play.command` | Double-click: `make`, then open the ROM in mGBA. Checks tools first. | ✅ [PR #2](https://github.com/poke-pals/project-poke-flora/pull/2) |
+| 4.6 | **Windows setup** – `setup/setup-windows.ps1` (one-liner) | Installs tools via winget, WSL1 Ubuntu (reboot), build packages, Poryscript. **Untested: run it with a friend on Windows.** | ⚠️ [PR #2](https://github.com/poke-pals/project-poke-flora/pull/2), needs Windows test |
+| 4.7 | **Build & Play (Windows)** – `Build & Play.bat` | Runs `make` inside WSL, opens the ROM in Windows mGBA. **Untested on Windows.** | ⚠️ [PR #2](https://github.com/poke-pals/project-poke-flora/pull/2), needs Windows test |
 | 4.8 | **Team docs** | This file, [ONBOARDING.md](ONBOARDING.md), [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md), plus planned: `EDITING_GUIDE.md`, `RULES.md`, `TROUBLESHOOTING.md`, `CREDITS.md`. | 🛠 drafts |
 | 4.9 | **PR template** | Replace RHH's `.github/pull_request_template.md` with a short team one. | 🔲 |
 | 4.10 | **`CODEOWNERS`** (optional) | Require your review on `src/`, `include/`, `Makefile`, `.github/`. | ⚠️ decide |
 
-When 4.4–4.7 are done, remove the "draft" banners in the friend docs.
+After the first Windows test, fix whatever the friend got stuck on in [ONBOARDING.md](ONBOARDING.md).
 
 ---
 

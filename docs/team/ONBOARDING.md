@@ -1,148 +1,150 @@
-# Onboarding: Day One
+# Getting Started
 
-Welcome! This gets your computer ready to work on the hack. It takes **30–60 minutes**, mostly waiting for downloads.
-You only do this once per computer. After today, use [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md).
+Set up your computer to work on the game. You only do this **once per computer**.
 
-> **🚧 Draft:** the setup scripts and Build & Play shortcuts mentioned below are still being built.
-> If a file this guide mentions doesn't exist yet, stop and message the maintainer.
+- ⏱️ About 30–60 minutes, mostly waiting
+- 💻 Works on Mac or Windows 10/11
+- 🆘 Stuck at any point? Take a screenshot and send it to the maintainer.
 
-**What you'll need**
-- A Mac or a Windows 10/11 PC
-- Your computer's password (Mac), or permission to approve admin prompts (Windows)
-- A GitHub account (free: <https://github.com/signup>)
-
----
-
-## What you're installing (and why)
-
-| Tool | What it's for |
-|---|---|
-| **GitHub Desktop** | Downloads the project, saves your changes, and shares them with the team. No command line. |
-| **Porymap** | The visual map editor: maps, NPCs, warps, wild Pokémon. |
-| **VS Code** | A text editor for dialogue/scripts (`.pory`), trainer teams, and other text files. |
-| **mGBA** | The Game Boy Advance emulator you test the game in. |
-| **Build tools** | Turn the project files into a playable game (`pokeemerald.gba`). Installed by the setup script; you never use them directly. |
+**You'll need:**
+- A free GitHub account: <https://github.com/signup>
+- Your computer's password
 
 ---
 
 ## 1. Accept the GitHub invite
 
-1. Tell the maintainer your GitHub username.
-2. Check your email for an invitation to join the **`poke-pals`** organization on GitHub and click **Join poke-pals**.
-   (Or go to <https://github.com/orgs/poke-pals/invitation> while signed in.)
+1. Send the maintainer your GitHub username.
+2. Open the invite email and click **Join poke-pals**.
+   - No email? Sign in to GitHub and go to <https://github.com/orgs/poke-pals/invitation>.
 
 ---
 
-## 2. Install GitHub Desktop and sign in
+## 2. Run the setup
 
-1. Download from <https://desktop.github.com> and install it.
-2. Open it and **sign in** with your GitHub account.
-3. When asked for your name and email for commits, the defaults are fine.
-
----
-
-## 3. Download (clone) the project
-
-1. In GitHub Desktop: **File → Clone repository…**
-2. Pick the hack's repository from the list (`poke-pals/project-poke-flora`).
-3. Leave the **Local path** as the default. Click **Clone**. (It's a large download; give it a few minutes.)
-4. ⚠️ **Important:** GitHub Desktop asks **"How are you planning to use this fork?"**
-   Choose **"For my own purposes."**
-   *Picking the other option sends your work to the wrong project.*
-
-Your copy now lives at:
-- **Mac:** `~/Documents/GitHub/project-poke-flora`
-- **Windows:** `C:\Users\YOUR-NAME\Documents\GitHub\project-poke-flora`
-
-**Tip:** In GitHub Desktop, **Repository → Show in Finder / Show in Explorer** opens this folder.
-
----
-
-## 4. Run the setup script
+This installs everything and downloads the project. Just copy, paste, and wait.
 
 ### Mac
-1. Open the project folder (see the tip above).
-2. Open the `setup` folder and **double-click `Setup for Mac.command`**.
-3. If macOS asks whether to open it, click **Open**.
-4. Enter your **Mac password** when asked (nothing appears while you type; that's normal) and press Return.
-5. Wait. At the end you'll see a checklist. Every line should have a ✅.
+
+1. Press **⌘ + Space**, type **Terminal**, press **Return**.
+2. Copy this line, paste it into Terminal, press **Return**:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/poke-pals/project-poke-flora/master/setup/setup-mac.sh)"
+   ```
+3. When it asks for your **password**, type it and press **Return**.
+   - Nothing shows while you type. That's normal.
+   - It may ask a few times.
+4. If a window pops up asking to install tools, click **Install**.
 
 ### Windows
-1. Open the project folder (see the tip above), then the `setup` folder.
-2. **Right-click `Setup for Windows.ps1` → Run with PowerShell.**
-3. Click **Yes** on the admin prompt.
-4. When it says to **restart your computer**, restart.
-5. After restarting, **run the script again the same way**. It continues where it left off.
-6. When Ubuntu opens for the first time, it asks you to make a **username and password**. Pick something you'll remember; you'll need the password later.
-7. At the end you'll see a checklist. Every line should have a ✅.
 
-**If anything shows ❌:** take a screenshot of the whole window and send it to the maintainer. Running the script again is always safe.
+1. Click **Start**, type **PowerShell**, click **Windows PowerShell**.
+   - Open it normally. **Don't** pick "Run as administrator".
+2. Copy this line, paste it (right-click), press **Enter**:
+   ```powershell
+   irm https://raw.githubusercontent.com/poke-pals/project-poke-flora/master/setup/setup-windows.ps1 | iex
+   ```
+3. Click **Yes** on any "allow changes" popups.
+4. If it tells you to **restart**:
+   1. Restart your computer.
+   2. An **Ubuntu** window may open and ask for a username and password. Make up any; just remember the password.
+   3. Open PowerShell again and run the **same line** again.
+
+### When it finishes
+
+- You'll see a checklist. Every line should be ✅.
+- See a ❌? Screenshot the window and send it to the maintainer.
+- Running the setup again is always safe.
+
+Your project folder is now:
+- **Mac:** `Documents/GitHub/project-poke-flora`
+- **Windows:** `Documents\GitHub\project-poke-flora`
 
 ---
 
-## 5. Open the project in Porymap (one time)
+## 3. Connect GitHub Desktop
+
+GitHub Desktop is how you save and share your work.
+
+1. Open **GitHub Desktop** and **sign in** with your GitHub account.
+2. Click **File → Add Local Repository…**
+3. Click **Choose…** and pick your project folder (from step 2). Click **Add Repository**.
+4. ⚠️ If it asks **"How are you planning to use this fork?"**, choose **"For my own purposes"**.
+   - The other choice sends your work to the wrong project.
+
+---
+
+## 4. Open the project in Porymap
+
+Porymap is the map editor.
 
 1. Open **Porymap**.
-2. **File → Open Project…** and choose your project folder from step 3 (the one with `Makefile` in it).
-   - Mac shortcut: in the file picker, press **⌘⇧G** and type `~/Documents/GitHub/project-poke-flora`.
-3. If asked for a **base game version**, choose **pokeemerald**.
-4. Porymap remembers this. Next time it opens straight to the project.
+2. Click **File → Open Project…** and pick your project folder.
+   - Mac tip: press **⌘ + Shift + G** and paste `~/Documents/GitHub/project-poke-flora`.
+3. If it asks for a game version, pick **pokeemerald**.
 
-**Pink/magenta maps?** Maps whose names end in `_Frlg` are FireRed maps that aren't part of our game. Ignore them. Our maps don't end in `_Frlg`.
+Porymap remembers this, so next time it opens straight to the project.
 
----
-
-## 6. First-day exercise: change some dialogue
-
-This checks that everything works, from editing to sharing.
-
-1. **Make a branch** – GitHub Desktop: **Current Branch → New Branch**, name it `yourname-first-change`, click **Create Branch**.
-2. **Edit** – In VS Code, open `data/maps/OldaleTown_House1/scripts.pory`.
-   Change the text inside one of the `format("…")` lines, for example:
-   `"Oh, a new TRAINER! Are you just starting out on your journey?"` → `"Hi! I'm testing the hack!"`
-   Save the file.
-3. **Build & Play** – Double-click **`Build & Play`** in the project folder (`.command` on Mac, `.bat` on Windows).
-   mGBA opens with the game.
-4. **Find your change** – Walk to **Oldale Town** (north of Route 101) and talk to the woman in the **bottom-left house**.
-   - To skip ahead: hold **S** and press **Return** (Mac) / **Enter** (Windows) in the overworld to open the debug menu → **Utilities → Warp**.
-5. **Commit** – Back in GitHub Desktop, you'll see `scripts.pory` in the changed files list. Type a summary like `Test dialogue change` and click **Commit to yourname-first-change**.
-6. **Push** – Click **Publish branch**.
-7. **Pull request** – Click **Create Pull Request**. A browser page opens.
-   ⚠️ Check that **base repository** shows **`poke-pals/project-poke-flora`**, **not** `rh-hideout/pokeemerald-expansion`. Then click **Create pull request**.
-8. Tell the maintainer. Once they merge it, you're officially set up! 🎉
+> **Pink maps?** Maps ending in `_Frlg` are FireRed maps we don't use. Ignore them.
 
 ---
 
-## One rule to know from day one
+## 5. Try it: make your first change
 
-**Never share the game file (`.gba`).**
-- Don't post `pokeemerald.gba` anywhere public (Discord servers, forums, file-sharing links), and don't send it to people outside the team.
-- A built `.gba` contains the original Pokémon Emerald, so sharing it is sharing Nintendo's game. Everyone on the team builds their own copy with Build & Play.
-- Show progress with **screenshots or videos** instead. Public releases will be **`.bps` patches** only, made by the maintainer.
-- Git already ignores `.gba` files, so GitHub Desktop never lists them. Don't rename or move one to get around that.
+This checks that everything works, start to finish.
 
-More rules are in [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md#3-make-your-changes).
+1. **Make a branch** (your own workspace)
+   - GitHub Desktop: **Current Branch → New Branch**
+   - Name it `yourname-first-change` and click **Create Branch**.
+2. **Change some text**
+   - Open **VS Code**, then **File → Open Folder…** and pick your project folder.
+   - Open `data/maps/OldaleTown_House1/scripts.pory`.
+   - Change the words inside any `format("...")`. For example:
+     `"Oh, a new TRAINER! Are you just starting out on your journey?"` → `"Hi! I'm testing the game!"`
+   - Save (**⌘ + S** or **Ctrl + S**).
+3. **Play it**
+   - In your project folder, double-click **Build & Play** (`.command` on Mac, `.bat` on Windows).
+   - The game opens in mGBA.
+4. **Find your change**
+   - Go to **Oldale Town**, enter the **bottom-left house**, and talk to the woman.
+   - Shortcut: hold **S** and press **Return/Enter** to open the debug menu, then pick **Utilities… → Warp to map warp…**
+5. **Save your work** (commit)
+   - GitHub Desktop shows your changed file.
+   - Type a short summary (like `Test text change`) and click **Commit**.
+6. **Share it**
+   - Click **Publish branch**, then **Create Pull Request**.
+   - ⚠️ On the web page, check that **base repository** says **`poke-pals/project-poke-flora`**. Then click **Create pull request**.
+7. Tell the maintainer. Once they approve it, you're all set! 🎉
 
 ---
 
-## mGBA controls (default)
+## ⚠️ The one big rule: never share the game file
 
-| GBA button | Mac | Windows |
-|---|---|---|
-| D-pad | Arrow keys | Arrow keys |
-| A / B | X / Z | X / Z |
-| L / R | A / S | A / S |
-| Start / Select | Return / Delete | Enter / Backspace |
-| Fast forward (hold) | Tab | Tab |
-| Save state 1–9 | Shift + F1–F9 (add **fn** on most Macs) | Shift + F1–F9 |
-| Load state 1–9 | F1–F9 (add **fn**) | F1–F9 |
-| Reset game | ⌘R | Ctrl+R |
-
-Change keys in **Settings → Controllers** (Mac: **mGBA → Settings**; Windows: **Tools → Settings**).
+- **Never** post or send `pokeemerald.gba` to anyone, anywhere (Discord, forums, file links).
+- Why: it contains Nintendo's original game. Everyone on the team makes their own copy with Build & Play.
+- Want to show progress? Share **screenshots or videos**.
+- Public releases will be patch files (`.bps`), made by the maintainer.
 
 ---
 
-## Next
+## Game controls (mGBA)
+
+| Game button | Keyboard |
+|---|---|
+| Move | Arrow keys |
+| A / B | X / Z |
+| L / R | A / S |
+| Start | Return (Mac) / Enter (Windows) |
+| Select | Delete (Mac) / Backspace (Windows) |
+| Fast forward | Hold Tab |
+| Save state 1 | Shift + F1 (Mac: add **fn**) |
+| Load state 1 | F1 (Mac: add **fn**) |
+
+Change keys: **Settings → Controllers** (Mac: **mGBA → Settings**; Windows: **Tools → Settings**).
+
+---
+
+## What's next
 
 - Everyday steps: [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md)
 - Stuck? Screenshot it and message the maintainer.

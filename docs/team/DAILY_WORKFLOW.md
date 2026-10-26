@@ -116,7 +116,7 @@ You can commit several times on the same branch.
 | Situation | What to do |
 |---|---|
 | "Merge conflict" in GitHub Desktop | Stop, don't guess. Screenshot it and message the maintainer. |
-| Build & Play says tools are missing | Run the setup script again (see [ONBOARDING.md §4](ONBOARDING.md#4-run-the-setup-script)). |
+| Build & Play says tools are missing | Run the setup script again (see [ONBOARDING.md §2](ONBOARDING.md#2-run-the-setup)). |
 | Map shows pink/magenta | It's a `_Frlg` (FireRed) map. Use a different map. |
 | My change doesn't show in game | Did you save the file? Did Build & Play finish without errors? Are you testing the right map? |
 | I edited the wrong branch | Don't commit. Message the maintainer; it's fixable. |
